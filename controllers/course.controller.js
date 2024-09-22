@@ -2,12 +2,11 @@ import University from "../models/university.model.js";
 import Course from "../models/course.model.js";
 
 const addCourses = async (req, res) => {
-  const { name, shortName, description, university, syllabus } = req.body;
+  const { name, shortName, description, university } = req.body;
 
   try {
     const universityDetails = await University.findOne({ name: university });
-    
-    
+
     if (!universityDetails) {
       return res.status(404).json({
         success: false,
@@ -15,9 +14,13 @@ const addCourses = async (req, res) => {
       });
     }
 
-    const availableCourse = await University.findOne({name: university}).populate('coursesOffered', 'name');
-    
-    const courseNames = availableCourse.coursesOffered.map(course => course.name);
+    const availableCourse = await University.findOne({
+      name: university,
+    }).populate("coursesOffered", "name");
+
+    const courseNames = availableCourse.coursesOffered.map(
+      (course) => course.name
+    );
 
     // Check if the course name already exists
     if (courseNames.includes(name)) {
@@ -32,17 +35,14 @@ const addCourses = async (req, res) => {
       shortName,
       description,
       university: universityDetails._id,
-      syllabus,
     });
-
-
 
     await newCourse.save();
 
     universityDetails.coursesOffered.push(newCourse._id);
     await universityDetails.save();
 
-    return  res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Course added successfully",
       data: newCourse,
@@ -58,15 +58,15 @@ const addCourses = async (req, res) => {
 const getAllCourse = async (req, res) => {
   try {
     const allCourse = await Course.find({})
-    .populate("university", "name")
-    .populate({
-      path: "semesters",
-      select: "semesterNumber",
-      populate: {
-        path: "subjects", // Populate subjects within semesters
-        select: "name" // Select only the name field from subjects
-      }
-    });
+      .populate("university", "name")
+      .populate({
+        path: "semesters",
+        select: "semesterNumber",
+        populate: {
+          path: "subjects", // Populate subjects within semesters
+          select: "name", // Select only the name field from subjects
+        },
+      });
 
     if (!allCourse) {
       return res.status(200).json({
@@ -93,7 +93,16 @@ const getCourse = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const course = await Course.findById(id).populate("university", "name");
+    const course = await Course.findById(id)
+      .populate("university", "name")
+      .populate({
+        path: "semesters",
+        select: "semesterNumber",
+        populate: {
+          path: "subjects", // Populate subjects within semesters
+          select: "name", // Select only the name field from subjects
+        },
+      });
 
     if (!course) {
       return res.status(404).json({
@@ -102,7 +111,7 @@ const getCourse = async (req, res) => {
       });
     }
 
-    return  res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Course found",
       data: course,
@@ -117,7 +126,7 @@ const getCourse = async (req, res) => {
 
 const updateCourse = async (req, res) => {
   const { id } = req.params;
-  const { name,  shortName ,description, university, semesters, syllabus } = req.body;
+  const { name, shortName, description, university, semesters } = req.body;
 
   try {
     const existingCourse = await Course.findById(id);
@@ -133,12 +142,12 @@ const updateCourse = async (req, res) => {
       shortName,
       description,
       semesters,
-      syllabus,
     };
 
-    
     if (university) {
-      const universityDetails = await University.findOne({ name: university }).populate('coursesOffered', 'name');
+      const universityDetails = await University.findOne({
+        name: university,
+      }).populate("coursesOffered", "name");
 
       if (!universityDetails) {
         return res.status(400).json({
@@ -147,14 +156,13 @@ const updateCourse = async (req, res) => {
         });
       }
 
-    if (universityDetails) {
-      updateData.university = universityDetails._id;
-    } else {
-      updateData.university = existingCourse.university;
-    }
+      if (universityDetails) {
+        updateData.university = universityDetails._id;
+      } else {
+        updateData.university = existingCourse.university;
+      }
     }
 
- 
     const course = await Course.findByIdAndUpdate(id, updateData, {
       new: true,
     });
@@ -168,7 +176,10 @@ const updateCourse = async (req, res) => {
 
     const universityDetails = await University.findOne({ name: university });
 
-    if (universityDetails && !universityDetails.coursesOffered.includes(course._id)) {
+    if (
+      universityDetails &&
+      !universityDetails.coursesOffered.includes(course._id)
+    ) {
       universityDetails.coursesOffered.push(course._id);
       await universityDetails.save();
     }

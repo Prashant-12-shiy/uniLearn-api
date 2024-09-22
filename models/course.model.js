@@ -24,12 +24,6 @@ const courseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Semester",
     }],
-    syllabus: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
   },
   {
     timestamps: true,
