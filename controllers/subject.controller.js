@@ -3,6 +3,8 @@ import Subjects from "../models/subject.model.js";
 import Notes from "../models/notes.model.js";
 import PastQuestion from "../models/pastQuestions.model.js";
 import Project from "../models/project.model.js";
+import Semester from "../models/semester.model.js";
+import University from "../models/university.model.js";
 
 const addSubject = async (req, res) => {
   const { name, syllabus, notes, pastQuestions, projects } = req.body;
@@ -13,7 +15,7 @@ const addSubject = async (req, res) => {
     if (ifSubject) {
       return res.status(404).json({
         success: false,
-        message: "Subject already exists",
+        message: "Subject already exists",  
       });
     }
 
@@ -73,33 +75,48 @@ const addSubject = async (req, res) => {
   }
 };
 
-const getSubject = async (req, res) => {
-  const { id } = req.params;
+  const getSubject = async (req, res) => {
+    const { id } = req.params;
 
-  try {
-    const subject = await Subjects.findById(id)
-      .populate("notes", "title")
-      .populate("pastQuestions", "name")
-      .populate("projects", "title");
+    try {
+      const subject = await Subjects.findById(id)
+        .populate("notes", "title")
+        .populate("pastQuestions", "name")
+        .populate("projects", "title");
 
-    if (!subject) {
-      return res.status(404).json({
+      if (!subject) {
+        return res.status(404).json({
+          success: false,
+          message: "Subject not found",
+        });
+      }
+
+      const semester = await Semester.findOne({ subjects: id })
+      .populate("course", "name description") // Populate course in the semester
+      .select("semesterNumber course"); // Select semesterNumber and course fields
+
+      const course = {
+        name: semester.course.name,
+        _id: semester.course._id,
+      };
+
+      const university = await University.findOne({ coursesOffered: semester.course._id})
+      .select("name")
+            
+      return res.status(200).json({
+        success: true,
+        data: {subject,
+          course,
+          university,
+        }
+      });
+    } catch (error) {
+      return res.status(500).json({
         success: false,
-        message: "Subject not found",
+        error: error.message,
       });
     }
-
-    return res.status(200).json({
-      success: true,
-      data: subject,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-};
+  };
 
 const updateSubject = async (req, res) => {
   const { id } = req.params;
