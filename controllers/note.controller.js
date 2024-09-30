@@ -1,36 +1,49 @@
+import fs from 'fs';
+import multer from 'multer';
+import uploadPDFToFilebase from '../routes/signature.route.js';
 import Notes from "../models/notes.model.js";
 import Subjects from "../models/subject.model.js";
 
+const upload = multer({ dest: 'uploads/' });
+
+
 const addNote = async (req, res) => {
-  const { title, contentUrl, description } = req.body;
+  const { title, description,contentUrl } = req.body;
 
   try {
+    // Check if note with the same title already exists
     const note = await Notes.findOne({ title: title });
 
     if (note) {
       return res.status(400).json({ message: "Note already exists" });
     }
 
+  
+    // Save the new note with the uploaded PDF URL
     const newNote = new Notes({
       title,
-      contentUrl,
+      contentUrl,  // Store the URL of the uploaded PDF
       description,
     });
 
     await newNote.save();
 
+    // Remove the temporary file from 'uploads'
+
     return res.status(200).json({
       success: true,
-      message: "Note added successfully",
+      message: "Note added successfully with PDF",
       data: newNote,
     });
   } catch (error) {
+    console.error('Error adding note:', error);
     return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
+
 
 const getNote = async (req, res) => {
   const { id } = req.params;
@@ -124,4 +137,4 @@ const deleteNote = async (req, res) => {
   }
 };
 
-export { addNote, getNote, updateNote, deleteNote };
+export { addNote, getNote, updateNote, deleteNote , upload};

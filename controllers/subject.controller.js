@@ -80,8 +80,8 @@ const addSubject = async (req, res) => {
 
     try {
       const subject = await Subjects.findById(id)
-        .populate("notes", "title")
-        .populate("pastQuestions", "name")
+        .populate("notes")
+        .populate("pastQuestions")
         .populate("projects", "title");
 
       if (!subject) {
@@ -131,12 +131,54 @@ const updateSubject = async (req, res) => {
         message: "Subject not found",
       });
     }
+    
+    const findDocuments = async (model, ids, label) => {
+      const docs = await model.find({ _id: { $in: ids } });
+      if (docs.length !== ids.length) {
+        return res.status(404).json({ success: false, message: `One or more ${label} not found` });
+      }
+      return docs;
+    };
 
-    const updatedsubject = await Subjects.findByIdAndUpdate(
+    let noteDetails = [];
+    if (notes && notes.length > 0) {
+      noteDetails = await findDocuments(Notes, notes, 'notes');
+    }
+
+    let pastQuestionDetails = [];
+    if (pastQuestions && pastQuestions.length > 0) {
+      pastQuestionDetails = await findDocuments(PastQuestion, pastQuestions, 'past questions');
+    }
+
+    let projectDetails = [];
+    if (projects && projects.length > 0) {
+      projectDetails = await findDocuments(Project, projects, 'projects');
+    }
+
+    // Merge new notes, past questions, and projects with the existing ones
+    const mergedNotes = [...subject.notes, ...noteDetails];
+    const mergedPastQuestions = [...subject.pastQuestions, ...pastQuestionDetails];
+    const mergedProjects = [...subject.projects, ...projectDetails];
+
+     const updatedSubject = await Subjects.findByIdAndUpdate(
       id,
-      { $set: { name, syllabus, notes, pastQuestions, projects } },
+      {
+        $set: {
+          name,
+          syllabus,
+          notes: mergedNotes,
+          pastQuestions: mergedPastQuestions,
+          projects: mergedProjects
+        },
+      },
       { new: true }
     );
+
+    res.status(200).json({
+      success: true,
+      message: "Updated subject",
+      data: updatedSubject
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -145,4 +187,4 @@ const updateSubject = async (req, res) => {
   }
 };
 
-export { addSubject, getSubject };
+export { addSubject, getSubject, updateSubject };
