@@ -13,7 +13,8 @@ const app = express();
 
 const allowedOrigins = [
     'http://localhost:3000', // For local development
-    'https://main--unilearnbyprash.netlify.app' // For production
+    'https://main--unilearnbyprash.netlify.app', // For production
+    'https://unilearnbyprash.netlify.app'
   ];
   
   app.use(cors({
