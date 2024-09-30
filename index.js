@@ -11,7 +11,16 @@ dotenv.config();
 const app = express();
 
 
-app.use(cors({origin: 'http://localhost:3000', credentials: true}));
+const allowedOrigins = [
+    'http://localhost:3000', // For local development
+    'https://main--unilearnbyprash.netlify.app' // For production
+  ];
+  
+  app.use(cors({
+    origin: allowedOrigins,
+    // methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add any methods you want to allow
+    credentials: true // Include this if you want to allow credentials (cookies, authorization headers)
+  }));
 
 app.use(express.json())
 
