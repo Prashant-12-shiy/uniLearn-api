@@ -24,6 +24,10 @@ const courseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Semester",
     }],
+    duration: {
+      type: Number,
+      required: true,
+    }
   },
   {
     timestamps: true,

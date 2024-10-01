@@ -2,7 +2,7 @@ import University from "../models/university.model.js";
 import Course from "../models/course.model.js";
 
 const addCourses = async (req, res) => {
-  const { name, shortName, description, university } = req.body;
+  const { name, shortName, description, university, duration } = req.body;
 
   try {
     const universityDetails = await University.findOne({ name: university });
@@ -35,6 +35,7 @@ const addCourses = async (req, res) => {
       shortName,
       description,
       university: universityDetails._id,
+      duration
     });
 
     await newCourse.save();
@@ -126,7 +127,7 @@ const getCourse = async (req, res) => {
 
 const updateCourse = async (req, res) => {
   const { id } = req.params;
-  const { name, shortName, description, university, semesters } = req.body;
+  const { name, shortName, description, university, semesters, duration } = req.body;
 
   try {
     const existingCourse = await Course.findById(id);
@@ -142,6 +143,7 @@ const updateCourse = async (req, res) => {
       shortName,
       description,
       semesters,
+      duration
     };
 
     if (university) {

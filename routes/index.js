@@ -8,6 +8,7 @@ import noteRouter from "./note.route.js";
 import pastQuestionRouter from "./pastQuestion.route.js";
 import projectRouter from "./project.route.js";
 import semesterRouter from "./semester.route.js";
+import catagoriesRouter from "./catagories.route.js";
 
 export default mainRouter
   .use("/", universityRouter)
@@ -16,4 +17,5 @@ export default mainRouter
   .use(noteRouter)
   .use(pastQuestionRouter)
   .use(projectRouter)
+  .use(catagoriesRouter)
   .use(semesterRouter);
