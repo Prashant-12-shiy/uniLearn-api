@@ -88,11 +88,13 @@ const updateSemester = async (req, res) => {
       if (subjectDetails.length === 0) {
         return res.status(400).json({ message: "No subjects found" });
       }
-      updates.subjects = subjectDetails.map((subject) => subject._id);
+      const subjectIds = subjectDetails.map((subject) => subject._id);
+
+      updates.subjects = [...new Set([...semester.subjects, ...subjectIds])];
     }
 
     if (projects) {
-      updates.projects = projects;
+      updates.projects = [...new Set([...semester.projects, ...projects])]; // Assuming projects is an array of strings or IDs
     }
 
     // Update the semester with the new values

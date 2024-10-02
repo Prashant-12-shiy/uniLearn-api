@@ -23,7 +23,11 @@ const subjectSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    syllabus: [SyllabusSchema],
+    // syllabus: [SyllabusSchema],
+    syllabus: {
+      type: String,
+      required: true,
+    },
     notes: [
       {
         type: mongoose.Schema.Types.ObjectId,
