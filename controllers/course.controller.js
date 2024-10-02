@@ -210,8 +210,15 @@ const deleteCourse = async (req, res) => {
         message: "Course not found",
       });
     }
+    const universityDetails = await University.findOne({coursesOffered: {$in: Ifcourse._id}})
+
+    if (universityDetails) {
+      universityDetails.coursesOffered.pull(Ifcourse._id);
+      await universityDetails.save();
+    }
 
     const course = await Course.findByIdAndDelete(id);
+
 
     return res.status(200).json({
       success: true,
