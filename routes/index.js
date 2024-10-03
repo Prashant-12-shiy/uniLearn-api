@@ -9,6 +9,7 @@ import pastQuestionRouter from "./pastQuestion.route.js";
 import projectRouter from "./project.route.js";
 import semesterRouter from "./semester.route.js";
 import catagoriesRouter from "./catagories.route.js";
+import messageRouter from "./contact.router.js";
 
 export default mainRouter
   .use("/", universityRouter)
@@ -18,4 +19,5 @@ export default mainRouter
   .use(pastQuestionRouter)
   .use(projectRouter)
   .use(catagoriesRouter)
-  .use(semesterRouter);
+  .use(semesterRouter)
+  .use(messageRouter);
