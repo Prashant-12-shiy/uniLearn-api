@@ -38,7 +38,7 @@ const showAllUniversities = async (req, res) => {
     );
 
     if (!university) {
-      return res.send(201).json({
+      return res.status(201).json({
         success: false,
         message: "No universities found",
       });
