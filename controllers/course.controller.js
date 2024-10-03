@@ -101,7 +101,7 @@ const getCourse = async (req, res) => {
         select: "semesterNumber",
         populate: {
           path: "subjects", // Populate subjects within semesters
-          select: "name", // Select only the name field from subjects
+          select: "name code", // Select only the name field from subjects
         },
       });
 

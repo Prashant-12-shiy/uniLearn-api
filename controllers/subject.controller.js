@@ -7,7 +7,7 @@ import Semester from "../models/semester.model.js";
 import University from "../models/university.model.js";
 
 const addSubject = async (req, res) => {
-  const { name, syllabus, notes, pastQuestions, projects } = req.body;
+  const { name, syllabus, notes, pastQuestions, projects, code } = req.body;
 
   try {
     const ifSubject = await Subjects.findOne({ name: name });
@@ -55,6 +55,7 @@ const addSubject = async (req, res) => {
     const subject = new Subjects({
       name,
       syllabus,
+      code,
       notes: noteDetails.map((note) => note._id),
       pastQuestions: pastQuestionDetails.map((pq) => pq._id),
       projects: projectDetails.map((proj) => proj._id),

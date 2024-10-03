@@ -28,6 +28,9 @@ const subjectSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    code: {
+      type: String
+    },
     notes: [
       {
         type: mongoose.Schema.Types.ObjectId,
