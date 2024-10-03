@@ -7,7 +7,7 @@ import Semester from "../models/semester.model.js";
 import University from "../models/university.model.js";
 
 const addSubject = async (req, res) => {
-  const { name, syllabus, notes, pastQuestions, projects, code } = req.body;
+  const { name, syllabus, notes, pastQuestions, projects, code, course, semesterNumber } = req.body;
 
   try {
     const ifSubject = await Subjects.findOne({ name: name });
@@ -62,6 +62,33 @@ const addSubject = async (req, res) => {
     });
 
     await subject.save();
+
+// Find the course and populate the semesters
+const courseDetails = await Course.findOne({ name: course }).populate("semesters", "semesterNumber");
+
+if (!courseDetails) {
+  return res.status(400).json({ message: "Course not found" });
+}
+
+// Find the matching semester in the course
+const semester = courseDetails.semesters.find(s => s.semesterNumber === semesterNumber);
+
+if (!semester) {
+  return res.status(400).json({ message: "Semester not found in course" });
+}
+
+// Now that you have the semester ID, you need to find the Semester document separately to modify it
+const semesterDoc = await Semester.findById(semester._id);
+
+if (!semesterDoc) {
+  return res.status(400).json({ message: "Semester document not found" });
+}
+
+// Push the subject into the semester's subjects array and save
+semesterDoc.subjects.push(subject._id); // Assuming 'subjects' is an array in Semester schema
+await semesterDoc.save();
+
+
 
     return res.status(200).json({
       success: true,

@@ -26,7 +26,7 @@ const subjectSchema = new mongoose.Schema(
     // syllabus: [SyllabusSchema],
     syllabus: {
       type: String,
-      required: true,
+      // required: true,
     },
     code: {
       type: String
