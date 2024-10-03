@@ -121,7 +121,7 @@ const addSubject = async (req, res) => {
 
 const updateSubject = async (req, res) => {
   const { id } = req.params;
-  const { name, syllabus, notes, pastQuestions, projects } = req.body;
+  const { name, syllabus, notes, pastQuestions, projects, code } = req.body;
 
   try {
     const subject = await Subjects.findById(id);
@@ -167,6 +167,7 @@ const updateSubject = async (req, res) => {
         $set: {
           name,
           syllabus,
+          code,
           notes: mergedNotes,
           pastQuestions: mergedPastQuestions,
           projects: mergedProjects
