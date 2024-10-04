@@ -11,6 +11,15 @@ const addSemester = async (req, res) => {
       return res.status(400).json({ message: "Course not found" });
     }
 
+    const semester = await Semester.findOne({ course: courseDetails._id, semesterNumber: semesterNumber });
+
+    if (semester) {
+      return res.status(404).json({
+        success: false,
+        message: "Semester Already Exists for this Course",
+      });
+    }
+
     const subjectDetails = await Subjects.find({ name: { $in: subjects } });
 
     if (subjectDetails.length === 0) {
@@ -19,14 +28,7 @@ const addSemester = async (req, res) => {
 
     const subjectIds = subjectDetails.map((subject) => subject._id);
 
-    const semester = await Semester.findOne({ semesterNumber: semesterNumber });
-
-    if (semester) {
-      return res.status(404).json({
-        success: false,
-        message: "Semester Already Exists",
-      });
-    }
+  
 
     const newSemester = new Semester({
       course: courseDetails._id,

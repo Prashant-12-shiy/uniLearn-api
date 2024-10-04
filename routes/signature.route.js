@@ -21,8 +21,6 @@
 //     ACL: 'public-read', // Make the file publicly accessible
 //   };
 
-  
-
 //   try {
 //     const data = await s3.upload(params).promise();
 //     console.log('File uploaded successfully at', data.Location);
@@ -36,10 +34,10 @@
 // export default uploadPDFToFilebase;
 
 // Example of the backend route// Import necessary libraries
-import express from 'express';
-import cloudinary from 'cloudinary';
+import express from "express";
+import cloudinary from "cloudinary";
 // import {cloudinary} from "../config/cloudinaryConfig.js"
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 // Initialize dotenv to access environment variables
 dotenv.config();
@@ -54,17 +52,17 @@ cloudinary.config({
 });
 
 // Endpoint to generate a Cloudinary signature for signed uploads
-router.post('/generateSignature', (req, res) => {
-  const { timestamp, upload_preset } = req.body; // Extract timestamp and upload preset from request body
+router.post("/generateSignature", (req, res) => {
+  const { timestamp, folder, upload_preset } = req.body; // Extract timestamp and upload preset from request body
 
   if (!timestamp || !upload_preset) {
-    return res.status(400).json({ message: 'Missing required parameters' });
+    return res.status(400).json({ message: "Missing required parameters" });
   }
 
   try {
     // Generate the signature
     const signature = cloudinary.utils.api_sign_request(
-      { timestamp, upload_preset },
+      { timestamp, upload_preset, folder },
       process.env.CLOUDINARY_API_SECRET
     );
 
@@ -76,7 +74,7 @@ router.post('/generateSignature', (req, res) => {
     });
   } catch (error) {
     console.error("Error generating signature:", error);
-    res.status(500).json({ message: 'Server error generating signature' });
+    res.status(500).json({ message: "Server error generating signature" });
   }
 });
 

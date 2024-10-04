@@ -61,7 +61,6 @@ const addSubject = async (req, res) => {
       projects: projectDetails.map((proj) => proj._id),
     });
 
-    await subject.save();
 
 // Find the course and populate the semesters
 const courseDetails = await Course.findOne({ name: course }).populate("semesters", "semesterNumber");
@@ -88,6 +87,7 @@ if (!semesterDoc) {
 semesterDoc.subjects.push(subject._id); // Assuming 'subjects' is an array in Semester schema
 await semesterDoc.save();
 
+await subject.save();
 
 
     return res.status(200).json({
