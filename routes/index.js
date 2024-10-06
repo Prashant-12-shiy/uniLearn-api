@@ -10,6 +10,7 @@ import projectRouter from "./project.route.js";
 import semesterRouter from "./semester.route.js";
 import catagoriesRouter from "./catagories.route.js";
 import messageRouter from "./contact.router.js";
+import mcqRouter from "./mcq.route.js";
 
 export default mainRouter
   .use("/", universityRouter)
@@ -20,4 +21,5 @@ export default mainRouter
   .use(projectRouter)
   .use(catagoriesRouter)
   .use(semesterRouter)
+  .use(mcqRouter)
   .use(messageRouter);

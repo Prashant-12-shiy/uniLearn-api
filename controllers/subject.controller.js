@@ -110,7 +110,8 @@ await subject.save();
       const subject = await Subjects.findById(id)
         .populate("notes")
         .populate("pastQuestions")
-        .populate("projects", "title");
+        .populate("projects", "title")
+        .populate("mcqQuestions", "question options points");
 
       if (!subject) {
         return res.status(404).json({
@@ -118,10 +119,14 @@ await subject.save();
           message: "Subject not found",
         });
       }
+      const randomMcqs = subject.mcqQuestions
+      .sort(() => Math.random() - 0.5) // Shuffle the array
+      .slice(0, 10); // Select the first 10 MCQs
 
       const semester = await Semester.findOne({ subjects: id })
       .populate("course", "name description") // Populate course in the semester
-      .select("semesterNumber course"); // Select semesterNumber and course fields
+      .select("semesterNumber course") // Select semesterNumber and course fields
+     
 
       const course = {
         name: semester.course.name,
@@ -133,7 +138,10 @@ await subject.save();
             
       return res.status(200).json({
         success: true,
-        data: {subject,
+        data: {subject: {
+          ...subject.toObject(),
+          mcqQuestions: randomMcqs,
+        },
           course,
           university,
         }

@@ -52,6 +52,13 @@ const subjectSchema = new mongoose.Schema(
         // required: true
       },
     ],
+    mcqQuestions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Mcq",
+        // required: true
+      }
+    ]
   },
   {
     timestamps: true,
