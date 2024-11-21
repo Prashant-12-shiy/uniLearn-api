@@ -2,13 +2,13 @@ import fs from 'fs';
 import multer from 'multer';
 import uploadPDFToFilebase from '../routes/signature.route.js';
 import Notes from "../models/notes.model.js";
-import Subjects from "../models/subject.model.js";
+import Subject from "../models/subject.model.js";
 
 const upload = multer({ dest: 'uploads/' });
 
 
 const addNote = async (req, res) => {
-  const { title, description,contentUrl } = req.body;
+  const { title, description,contentUrl , subject } = req.body;
 
   try {
     // Check if note with the same title already exists
@@ -18,7 +18,13 @@ const addNote = async (req, res) => {
       return res.status(400).json({ message: "Note already exists" });
     }
 
-  
+    const subjectDoc = await Subject.findOne({ name: subject });
+    if (!subjectDoc) {
+        return res.status(400).json({
+            success: false,
+            message: "Subject not found"
+        });
+    }
     // Save the new note with the uploaded PDF URL
     const newNote = new Notes({
       title,
@@ -27,6 +33,9 @@ const addNote = async (req, res) => {
     });
 
     await newNote.save();
+
+    subjectDoc.notes.push(newNote._id);
+    await subjectDoc.save();
 
     // Remove the temporary file from 'uploads'
 

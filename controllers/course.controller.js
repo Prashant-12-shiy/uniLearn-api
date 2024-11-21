@@ -234,3 +234,5 @@ const deleteCourse = async (req, res) => {
 };
 
 export { addCourses, getAllCourse, getCourse, updateCourse, deleteCourse };
+
+//Mongodb, expressJs, Nodejs

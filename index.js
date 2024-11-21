@@ -5,6 +5,7 @@ import mainRouter from "./routes/index.js";
 import connectDB from "./db/db.js"
 import uploadRoute from "./routes/signature.route.js"
 import signatureRoutes from "./routes/signature.route.js"
+import authRoutes from "./routes/auth.router.js"
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ const allowedOrigins = [
 app.use(express.json())
 
 app.use("/api", mainRouter);
+app.use('/api/auth', authRoutes)
 // app.use('/api', uploadRoute);
 app.use('/api', signatureRoutes);
 

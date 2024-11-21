@@ -1,7 +1,8 @@
 import PastQuestion from "../models/pastQuestions.model.js";
+import Subject from "../models/subject.model.js"
 
 const addPastQuestion = async (req, res) => {
-    const {name, year, contentUrl, description} = req.body;
+    const {name, year, contentUrl, description, subject} = req.body;
     try {
         const question = await PastQuestion.findOne({contentUrl});
 
@@ -9,6 +10,14 @@ const addPastQuestion = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Past question already exists"
+            });
+        }
+        
+        const subjectDoc = await Subject.findOne({ name: subject });
+        if (!subjectDoc) {
+            return res.status(400).json({
+                success: false,
+                message: "Subject not found"
             });
         }
 
@@ -21,11 +30,17 @@ const addPastQuestion = async (req, res) => {
 
         await newQuestion.save();
 
+
+        // Add the past question to the subject's pastQuestions array
+        subjectDoc.pastQuestions.push(newQuestion._id);
+        await subjectDoc.save();
+
         return res.status(200).json({
             success: true,
             message: "Past question added successfully",
             data: newQuestion
         });
+        
     } catch (error) {
         return res.status(500).json({
             success: false,

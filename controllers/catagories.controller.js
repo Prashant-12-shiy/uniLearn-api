@@ -71,6 +71,30 @@ const getAllCatagories = async (req, res) => {
     });
   }
 };
+
+
+const getCatagories = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const catagories = await Catagories.findById(id).populate(
+      "courses",
+      "name shortName"
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "catagories",
+      data: catagories,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
 const updateCategory = async (req, res) => {
   const { id } = req.params;
   const { title, description, course } = req.body; // Single course to be added
@@ -126,4 +150,4 @@ const updateCategory = async (req, res) => {
   }
 };
 
-export { addCatagories, getAllCatagories, updateCategory };
+export { addCatagories, getAllCatagories, updateCategory, getCatagories };
