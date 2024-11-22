@@ -20,20 +20,20 @@ const addSemester = async (req, res) => {
       });
     }
 
-    const subjectDetails = await Subjects.find({ name: { $in: subjects } });
+    // const subjectDetails = await Subjects.find({ name: { $in: subjects } });
 
-    if (subjectDetails.length === 0) {
-      return res.status(400).json({ message: "No subjects found" });
-    }
+    // if (subjectDetails.length === 0) {
+    //   return res.status(400).json({ message: "No subjects found" });
+    // }
 
-    const subjectIds = subjectDetails.map((subject) => subject._id);
+    // const subjectIds = subjectDetails.map((subject) => subject._id);
 
   
 
     const newSemester = new Semester({
       course: courseDetails._id,
       semesterNumber,
-      subjects: subjectIds,
+      // subjects: subjectIds,
       projects,
     });
 

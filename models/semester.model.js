@@ -13,7 +13,7 @@ const semesterSchema = new mongoose.Schema({
     subjects: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Subjects',
-        required: true
+        // required: true
     }],
     projects: [{
         type: mongoose.Schema.Types.ObjectId,
